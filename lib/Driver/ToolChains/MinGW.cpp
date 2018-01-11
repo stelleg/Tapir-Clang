@@ -189,6 +189,10 @@ void tools::MinGW::Linker::ConstructJob(Compilation &C, const JobAction &JA,
   TC.AddFilePathLibArgs(Args, CmdArgs);
   AddLinkerInputs(TC, Inputs, Args, CmdArgs, JA);
 
+  TC.AddTapirRuntimeLibArgs(Args, CmdArgs);
+
+  // TODO: Add ASan stuff here
+
   // TODO: Add profile stuff here
 
   if (TC.ShouldLinkCXXStdlib(Args)) {

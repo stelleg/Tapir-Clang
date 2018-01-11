@@ -22,6 +22,7 @@
 #include "clang/Basic/Visibility.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/Triple.h"
+#include "llvm/Transforms/Tapir/TapirTypes.h"
 #include <string>
 #include <vector>
 
@@ -180,6 +181,8 @@ public:
 
 
 public:
+  llvm::TapirTargetType Tapir;
+
   /// Set of enabled sanitizers.
   SanitizerSet Sanitize;
 
@@ -370,7 +373,6 @@ enum TranslationUnitKind {
   /// The translation unit is a module.
   TU_Module
 };
-
 } // namespace clang
 
 #endif // LLVM_CLANG_BASIC_LANGOPTIONS_H

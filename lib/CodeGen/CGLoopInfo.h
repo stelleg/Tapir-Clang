@@ -65,6 +65,10 @@ struct LoopAttributes {
   unsigned UnrollAndJamCount;
 
   /// Value for llvm.loop.distribute.enable metadata.
+  /// tapir.loop.grainsize.
+  unsigned TapirGrainsize;
+
+  /// Value for llvm.loop.distribute.enable metadata.
   LVEnableState DistributeEnable;
 
   /// Value for llvm.loop.pipeline.disable metadata.
@@ -72,6 +76,12 @@ struct LoopAttributes {
 
   /// Value for llvm.loop.pipeline.iicount metadata.
   unsigned PipelineInitiationInterval;
+
+  /// Tapir-loop spawning strategy.
+  enum LSStrategy { Sequential, DAC };
+
+  /// Value for tapir.loop.spawn.strategy metadata.
+  LSStrategy SpawnStrategy;
 };
 
 /// Information used when generating a structured loop.
@@ -174,7 +184,7 @@ public:
   /// Set the unroll count for the next loop pushed.
   void setUnrollCount(unsigned C) { StagedAttrs.UnrollCount = C; }
 
-  /// \brief Set the unroll count for the next loop pushed.
+  /// Set the unroll count for the next loop pushed.
   void setUnrollAndJamCount(unsigned C) { StagedAttrs.UnrollAndJamCount = C; }
 
   /// Set the pipeline disabled state.
@@ -184,6 +194,14 @@ public:
   void setPipelineInitiationInterval(unsigned C) {
     StagedAttrs.PipelineInitiationInterval = C;
   }
+
+  /// Set the Tapir-loop spawning strategy for the next loop pushed.
+  void setSpawnStrategy(const LoopAttributes::LSStrategy &Strat) {
+    StagedAttrs.SpawnStrategy = Strat;
+  }
+
+  /// Set the Tapir-loop grainsize for the next loop pushed.
+  void setTapirGrainsize(unsigned C) { StagedAttrs.TapirGrainsize = C; }
 
 private:
   /// Returns true if there is LoopInfo on the stack.
