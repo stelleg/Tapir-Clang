@@ -4136,6 +4136,42 @@ public:
   }
 };
 
+// This represents a Cilk_Spawn declaration.
+// class CilkSpawnDecl : public Decl {
+//   /// The CapturedStmt associated to the expression or statement with
+//   /// a Cilk spawn call.
+//   CapturedStmt *CapturedSpawn;
+
+//   CilkSpawnDecl(DeclContext *DC, CapturedStmt *Spawn);
+
+// public:
+//   static CilkSpawnDecl *Create(ASTContext &C, DeclContext *DC,
+//                                CapturedStmt *Spawn);
+//   static CilkSpawnDecl *CreateDeserialized(ASTContext &C, unsigned ID);
+
+//   /// Returns if this Cilk spawn has a receiver.
+//   bool hasReceiver() const;
+
+//   /// Returns the receiver declaration.
+//   VarDecl *getReceiverDecl() const;
+
+//   /// Returns the expression or statement with a Cilk spawn.
+//   Stmt *getSpawnStmt();
+//   const Stmt *getSpawnStmt() const {
+//     return const_cast<CilkSpawnDecl *>(this)->getSpawnStmt();
+//   }
+
+//   /// Returns the associated CapturedStmt.
+//   CapturedStmt *getCapturedStmt() { return CapturedSpawn; }
+//   const CapturedStmt *getCapturedStmt() const { return CapturedSpawn; }
+
+//   static bool classof(const Decl *D) { return classofKind(D->getKind()); }
+//   static bool classofKind(Kind K) { return K == CilkSpawn; }
+
+//   friend class ASTDeclReader;
+//   friend class ASTDeclWriter;
+// };
+
 /// Describes a module import declaration, which makes the contents
 /// of the named module visible in the current translation unit.
 ///
