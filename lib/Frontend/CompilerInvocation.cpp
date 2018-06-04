@@ -2810,14 +2810,29 @@ bool CompilerInvocation::CreateFromArgs(CompilerInvocation &Res,
   }
 
   LangOpts.Cilk = Args.hasArg(OPT_fcilkplus);
-  LangOpts.Detach = Args.hasArg(OPT_fdetach);
-  LangOpts.Rhino = Args.hasArg(OPT_frhino);
-  TapirTargetType TapirTarget = parseTapirTarget(Args);
-  if (TapirTarget == TapirTargetType::Last_TapirTargetType)
-    if (const Arg *A = Args.getLastArg(OPT_ftapir_EQ))
-      Diags.Report(diag::err_drv_invalid_value) << A->getAsString(Args)
-                                                << A->getValue();
-  LangOpts.TapirTarget = TapirTarget;
+  LangOpts.Tapir = llvm::TapirTargetType::None;
+
+  // FIXME: Fix -ftapir=* parsing to use conventional mechanisms for handling
+  // arguments.
+  if (Args.hasArg(OPT_ftapir)) {
+    if (Arg *A = Args.getLastArg(OPT_ftapir)) {
+      StringRef Name = A->getValue();
+      if (Name == "none")
+        LangOpts.Tapir = llvm::TapirTargetType::None;
+      else if (Name == "cilk") {
+        LangOpts.Tapir = llvm::TapirTargetType::Cilk;
+        LangOpts.Cilk |= true;
+      } else if (Name == "openmp")
+        LangOpts.Tapir = llvm::TapirTargetType::OpenMP;
+      else if (Name == "qthreads")
+        LangOpts.Tapir = llvm::TapirTargetType::Qthreads;
+      else if (Name == "serial")
+        LangOpts.Tapir = llvm::TapirTargetType::Serial;
+      else
+        Diags.Report(diag::err_drv_invalid_value) << A->getAsString(Args) <<
+          Name;
+    }
+  }
 
   if (LangOpts.Cilk && (LangOpts.ObjC1 || LangOpts.ObjC2))
     Diags.Report(diag::err_drv_cilk_objc);
