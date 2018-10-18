@@ -899,6 +899,12 @@ public:
   }
 };
 
+class ForkStmt : public Stmt {
+public:
+  Stmt* left;
+  Stmt* right;
+  ForkStmt(SourceLocation il, Stmt *left, Stmt* right);
+}; 
 
 /// IfStmt - This represents an if/then/else.
 ///

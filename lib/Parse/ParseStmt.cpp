@@ -241,6 +241,8 @@ Retry:
 
   case tok::kw_if:                  // C99 6.8.4.1: if-statement
     return ParseIfStatement(TrailingElseLoc);
+  case tok::kw_fork:                // CNEVER : fork-statement
+    return ParseForkStatement(TrailingElseLoc);
   case tok::kw_switch:              // C99 6.8.4.2: switch-statement
     return ParseSwitchStatement(TrailingElseLoc);
 
@@ -1141,6 +1143,60 @@ bool Parser::ParseParenExprOrCondition(StmtResult *InitStmt,
   return false;
 }
 
+// 'fork' statement statement 
+StmtResult Parser::ParseForkStatement(SourceLocation *TrailingElseLoc) {
+  assert(Tok.is(tok::kw_fork) && "Not a fork stmt!");
+  SourceLocation ForkLoc = ConsumeToken();  // eat the 'fork'.
+
+  ParseScope InnerScope(this, Scope::DeclScope, C99orCXX, Tok.is(tok::l_brace));
+
+  // Read left statement
+  SourceLocation LeftLoc = Tok.getLocation();
+
+  SourceLocation InnerStatementTrailingElseLoc;
+  StmtResult Left;
+  {
+    EnterExpressionEvaluationContext PotentiallyDiscarded(
+        Actions, Sema::ExpressionEvaluationContext::DiscardedStatement, nullptr,
+        false,
+        /*ShouldEnter=*/ConstexprCondition && !*ConstexprCondition);
+    ThenStmt = ParseStatement(&InnerStatementTrailingElseLoc);
+  }
+
+  // Pop the 'if' scope if needed.
+  InnerScope.Exit();
+
+  // If it has an else, parse it.
+  StmtResult Right;
+
+  ElseStmtLoc = Tok.getLocation();
+
+  ParseScope InnerScope(this, Scope::DeclScope, C99orCXX,
+                        Tok.is(tok::l_brace));
+
+  EnterExpressionEvaluationContext PotentiallyDiscarded(
+      Actions, Sema::ExpressionEvaluationContext::DiscardedStatement, nullptr,
+      false,
+      /*ShouldEnter=*/ConstexprCondition && *ConstexprCondition);
+  ElseStmt = ParseStatement();
+
+  // Pop the 'else' scope if needed.
+  InnerScope.Exit();
+
+  IfScope.Exit();
+
+  // If the then or else stmt is invalid and the other is valid (and present),
+  // make turn the invalid one into a null stmt to avoid dropping the other
+  // part.  If both are invalid, return error.
+  if ((Left.isInvalid() && Right.isInvalid()) ||
+      (Left.isInvalid() && Right.get() == nullptr) ||
+      (Left.get() == nullptr && Right.isInvalid())) {
+    // Both invalid, or one is invalid and other is non-present: return error.
+    return StmtError();
+  }
+
+  return Actions.ActOnForkStmt(ForkLoc, Left.get(), Right.get());
+}
 
 /// ParseIfStatement
 ///       if-statement: [C99 6.8.4.1]

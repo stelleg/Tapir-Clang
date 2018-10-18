@@ -510,6 +510,24 @@ public:
 }
 
 StmtResult
+Sema::ActOnForkStmt(SourceLocation ForkLoc, Stmt *left, Stmt *right){
+  DiagnoseUnusedExprResult(left);
+  DiagnoseUnusedExprResult(right);
+
+  PushFunctionScope();
+  getCurFunction()->setHasBranchProtectedScope();
+  PushExpressionEvaluationContext(
+      ExpressionEvaluationContext::PotentiallyEvaluated);
+
+  StmtResult Result = new (Context) ForkStmt(SpawnLoc, left, right);
+
+  PopExpressionEvaluationContext();
+  PopFunctionScopeInfo();
+
+  return Result;
+}
+
+StmtResult
 Sema::ActOnIfStmt(SourceLocation IfLoc, bool IsConstexpr, Stmt *InitStmt,
                   ConditionResult Cond,
                   Stmt *thenStmt, SourceLocation ElseLoc,
