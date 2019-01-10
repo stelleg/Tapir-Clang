@@ -368,6 +368,14 @@ Retry:
     // }
     return ParseCilkSpawnStatement();
 
+  case tok::kw_spawn:              // [CP] _Cilk_spawn statement
+    // if (!getLangOpts().Cilk) {
+    //   Diag(Tok, diag::err_cilkplus_disable);
+    //   SkipUntil(tok::semi);
+    //   return StmtError();
+    // }
+    return ParseSpawnStatement();
+
   case tok::kw__Cilk_sync:               // [CP] _Cilk_sync statement
     // if (!getLangOpts().Cilk) {
     //   Diag(Tok, diag::err_cilkplus_disable);
@@ -376,6 +384,16 @@ Retry:
     // }
     Res = ParseCilkSyncStatement();
     SemiError = "_Cilk_sync";
+    break;
+
+  case tok::kw_sync:               // [CP] _Cilk_sync statement
+    // if (!getLangOpts().Cilk) {
+    //   Diag(Tok, diag::err_cilkplus_disable);
+    //   SkipUntil(tok::semi);
+    //   return StmtError();
+    // }
+    Res = ParseSyncStatement();
+    SemiError = "sync";
     break;
 
   case tok::kw__Cilk_for:

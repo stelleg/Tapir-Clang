@@ -61,6 +61,48 @@ public:
   }
 };
 
+/// SpawnStmt - This represents a spawn.
+///
+class SpawnStmt : public Stmt {
+  SourceLocation SpawnLoc;
+  StringRef SyncVar;
+  Stmt *SpawnedStmt;
+
+public:
+  explicit SpawnStmt(SourceLocation SL, StringRef sv)
+      : SpawnStmt(SL, sv, nullptr) {}
+
+  SpawnStmt(SourceLocation SL, StringRef SV, Stmt *S)
+      : Stmt(SpawnStmtClass), SpawnLoc(SL), SyncVar(SV), SpawnedStmt(S) { }
+
+  // \brief Build an empty spawn statement.
+  explicit SpawnStmt(EmptyShell Empty)
+      : Stmt(SpawnStmtClass,  Empty) { }
+
+  StringRef getSyncVar() const;
+
+  const Stmt *getSpawnedStmt() const;
+  Stmt *getSpawnedStmt();
+  void setSpawnedStmt(Stmt *S) { SpawnedStmt = S; }
+
+  SourceLocation getSpawnLoc() const { return SpawnLoc; }
+  void setSpawnLoc(SourceLocation L) { SpawnLoc = L; }
+
+  SourceLocation getLocStart() const LLVM_READONLY { return SpawnLoc; }
+  SourceLocation getLocEnd() const LLVM_READONLY {
+    return SpawnedStmt->getLocEnd();
+  }
+
+  static bool classof(const Stmt *T) {
+    return T->getStmtClass() == SpawnStmtClass;
+  }
+
+  // Iterators
+  child_range children() {
+    return child_range(&SpawnedStmt, &SpawnedStmt+1);
+  }
+};
+
 /// CilkSyncStmt - This represents a _Cilk_sync.
 ///
 class CilkSyncStmt : public Stmt {
@@ -80,6 +122,35 @@ public:
 
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == CilkSyncStmtClass;
+  }
+
+  // Iterators
+  child_range children() {
+    return child_range(child_iterator(), child_iterator());
+  }
+};
+
+class SyncStmt : public Stmt {
+  SourceLocation SyncLoc;
+  StringRef SyncVar; 
+
+public:
+  SyncStmt(SourceLocation SL, StringRef SV) : 
+    Stmt(SyncStmtClass), SyncLoc(SL), SyncVar(SV) {}
+
+  // \brief Build an empty __sync statement.
+  explicit SyncStmt(EmptyShell Empty) : Stmt(SyncStmtClass, Empty) { }
+
+  StringRef getSyncVar() const;
+
+  SourceLocation getSyncLoc() const { return SyncLoc; }
+  void setSyncLoc(SourceLocation L) { SyncLoc = L; }
+
+  SourceLocation getLocStart() const LLVM_READONLY { return SyncLoc; }
+  SourceLocation getLocEnd() const LLVM_READONLY { return SyncLoc; }
+
+  static bool classof(const Stmt *T) {
+    return T->getStmtClass() == SyncStmtClass;
   }
 
   // Iterators

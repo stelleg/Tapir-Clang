@@ -5125,10 +5125,14 @@ CXString clang_getCursorKindSpelling(enum CXCursorKind Kind) {
     return cxstring::createRef("FriendDecl");
   case CXCursor_CilkSpawnStmt:
     return cxstring::createRef("CilkSpawnStmt");
+  case CXCursor_SpawnStmt:
+    return cxstring::createRef("SpawnStmt");
   case CXCursor_CilkSpawnExpr:
     return cxstring::createRef("CilkSpawnExpr");
   case CXCursor_CilkSyncStmt:
     return cxstring::createRef("CilkSyncStmt");
+  case CXCursor_SyncStmt:
+    return cxstring::createRef("SyncStmt");
   case CXCursor_CilkForStmt:
     return cxstring::createRef("CilkForStmt");
   }

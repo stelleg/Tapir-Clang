@@ -2123,7 +2123,11 @@ void CodeGenFunction::DetachScope::RestoreDetachScope() {
   CGF.AllocaInsertPt = SavedDetachedAllocaInsertPt;
 }
 
-void CodeGenFunction::DetachScope::StartDetach() {
+void CodeGenFunction::DetachScope::StartDetach(){
+  return StartLabeledDetach(CGF.CurSyncRegion);
+}
+
+void CodeGenFunction::DetachScope::StartLabeledDetach(SyncRegion* SR) {
   if (!DetachInitialized)
     InitDetachScope();
   else
@@ -2131,7 +2135,7 @@ void CodeGenFunction::DetachScope::StartDetach() {
 
   // Create the detach
   CGF.Builder.CreateDetach(DetachedBlock, ContinueBlock,
-                           CGF.CurSyncRegion->getSyncRegionStart());
+                           SR->getSyncRegionStart());
 
   // Save the old EH state.
   OldEHResumeBlock = CGF.EHResumeBlock;
@@ -2174,6 +2178,10 @@ void CodeGenFunction::DetachScope::StartDetach() {
 }
 
 void CodeGenFunction::DetachScope::FinishDetach() {
+  return FinishLabeledDetach(CGF.CurSyncRegion);
+}
+
+void CodeGenFunction::DetachScope::FinishLabeledDetach(SyncRegion* SR) {
   assert(DetachStarted &&
          "Attempted to finish a detach that was not started.");
 
@@ -2184,7 +2192,7 @@ void CodeGenFunction::DetachScope::FinishDetach() {
 
   // The CFG path into the spawned statement should terminate with a `reattach'.
   CGF.Builder.CreateReattach(ContinueBlock,
-                             CGF.CurSyncRegion->getSyncRegionStart());
+                             SR->getSyncRegionStart());
 
   // Restore the alloca insertion point.
   llvm::Instruction *Ptr = CGF.AllocaInsertPt;

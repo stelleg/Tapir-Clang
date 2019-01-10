@@ -40,6 +40,40 @@ StmtResult Parser::ParseCilkSpawnStatement() {
   return Actions.ActOnCilkSpawnStmt(SpawnLoc, SubStmt.get());
 }
 
+/// ParseSyncStatement
+///       sync-statement:
+///         'sync' identifier ';'
+StmtResult Parser::ParseSyncStatement() {
+  assert(Tok.is(tok::kw_sync) && "Not a sync stmt!");
+  SourceLocation SyncLoc = ConsumeToken();
+  assert(Tok.is(tok::identifier) && Tok.getIdentifierInfo() &&
+         "Not an identifier!");
+  Token IdentTok = Tok; 
+  ConsumeToken(); 
+  return Actions.ActOnSyncStmt(SyncLoc, IdentTok.getIdentifierInfo()->getName());
+}
+
+/// ParseSpawnStatement
+///       spawn-statement:
+///         'spawn' identifier statement
+StmtResult Parser::ParseSpawnStatement() {
+  assert(Tok.is(tok::kw_spawn) && "Not a spawn stmt!");
+  SourceLocation SpawnLoc = ConsumeToken();  // eat the '__spawn'.
+
+  assert(Tok.is(tok::identifier) && Tok.getIdentifierInfo() &&
+         "Not an identifier!");
+  Token IdentTok = Tok; 
+  ConsumeToken();
+
+  // Parse statement of spawned child
+  StmtResult SubStmt = ParseStatement();
+  if (SubStmt.isInvalid()) {
+    SkipUntil(tok::semi);
+    return StmtError();
+  }
+  return Actions.ActOnSpawnStmt(SpawnLoc, IdentTok.getIdentifierInfo()->getName(), SubStmt.get());
+}
+
 /// ParseCilkForStatement
 ///       cilk_for-statement:
 ///         '_Cilk_for' '(' expr ';' expr ';' expr ')' statement

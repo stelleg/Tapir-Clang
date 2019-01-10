@@ -2506,6 +2506,9 @@ DEF_TRAVERSE_STMT(CilkSpawnExpr, {})
 DEF_TRAVERSE_STMT(CilkSyncStmt, {})
 DEF_TRAVERSE_STMT(CilkForStmt, {})
 
+DEF_TRAVERSE_STMT(SpawnStmt, {})
+DEF_TRAVERSE_STMT(SyncStmt, {})
+
 // These operators (all of them) do not need any action except
 // iterating over the children.
 DEF_TRAVERSE_STMT(BinaryConditionalOperator, {})

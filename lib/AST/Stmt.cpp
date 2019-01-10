@@ -1132,8 +1132,25 @@ const Stmt* CilkSpawnStmt::getSpawnedStmt() const {
   return SpawnedStmt;
 }
 
+const Stmt* SpawnStmt::getSpawnedStmt() const {
+  return SpawnedStmt;
+}
+
+
 Stmt* CilkSpawnStmt::getSpawnedStmt() {
   return SpawnedStmt;
+}
+
+Stmt* SpawnStmt::getSpawnedStmt() {
+  return SpawnedStmt;
+}
+
+StringRef SpawnStmt::getSyncVar() const {
+  return SyncVar;
+}
+
+StringRef SyncStmt::getSyncVar() const {
+  return SyncVar;
 }
 
 // CilkForStmt

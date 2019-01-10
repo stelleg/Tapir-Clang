@@ -30,6 +30,15 @@ llvm::Instruction *CodeGenFunction::EmitSyncRegionStart() {
   return SRStart;
 }
 
+llvm::Instruction *CodeGenFunction::EmitLabeledSyncRegionStart(StringRef SV) {
+  // Start the sync region.  To ensure the syncregion.start call dominates all
+  // uses of the generated token, we insert this call at the alloca insertion
+  // point.
+  llvm::Instruction *SRStart = llvm::CallInst::Create(
+      CGM.getIntrinsic(llvm::Intrinsic::syncregion_start), SV, AllocaInsertPt);
+  return SRStart;
+}
+
 /// EmitCilkSyncStmt - Emit a _Cilk_sync node.
 void CodeGenFunction::EmitCilkSyncStmt(const CilkSyncStmt &S) {
   llvm::BasicBlock *ContinueBlock = createBasicBlock("sync.continue");
@@ -45,6 +54,21 @@ void CodeGenFunction::EmitCilkSyncStmt(const CilkSyncStmt &S) {
   llvm::Instruction *SRStart = CurSyncRegion->getSyncRegionStart();
 
   Builder.CreateSync(ContinueBlock, SRStart);
+  EmitBlock(ContinueBlock);
+}
+
+/// EmitSyncStmt - Emit a sync node.
+void CodeGenFunction::EmitSyncStmt(const SyncStmt &S) {
+  llvm::BasicBlock *ContinueBlock = createBasicBlock("sync.continue");
+
+  // If this code is reachable then emit a stop point (if generating
+  // debug info). We have to do this ourselves because we are on the
+  // "simple" statement path.
+  if (HaveInsertPoint())
+    EmitStopPoint(&S);
+
+  Builder.CreateSync(ContinueBlock, 
+    getOrCreateLabeledSyncRegion(S.getSyncVar())->getSyncRegionStart());
   EmitBlock(ContinueBlock);
 }
 
@@ -145,6 +169,29 @@ void CodeGenFunction::EmitCilkSpawnStmt(const CilkSpawnStmt &S) {
 
   // Finish the detach.
   PopDetachScope();
+}
+
+void CodeGenFunction::EmitSpawnStmt(const SpawnStmt &S) {
+  // Set up to perform a detach.
+  // PushDetachScope();
+  SyncRegion* SR = getOrCreateLabeledSyncRegion(S.getSyncVar());
+  //StartLabeledDetach(SR);
+
+  llvm::BasicBlock* DetachedBlock = createBasicBlock("det.achd");
+  llvm::BasicBlock* ContinueBlock = createBasicBlock("det.cont");
+  Builder.CreateDetach(DetachedBlock, ContinueBlock,
+                           SR->getSyncRegionStart());
+
+  EmitBlock(DetachedBlock);
+  EmitStmt(S.getSpawnedStmt());
+
+  Builder.CreateReattach(ContinueBlock,
+                             SR->getSyncRegionStart());
+
+  EmitBlock(ContinueBlock);
+  // Finish the detach.
+  //CurDetachScope->FinishLabeledDetach(SR);
+  //delete CurDetachScope;
 }
 
 // Helper routine copied from CodeGenFunction.cpp

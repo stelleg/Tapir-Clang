@@ -228,6 +228,8 @@ namespace clang {
     Stmt *VisitCilkSpawnStmt(CilkSpawnStmt *S);
     Stmt *VisitCilkSyncStmt(CilkSyncStmt *S);
     Stmt *VisitCilkForStmt(CilkForStmt *S);
+    Stmt *VisitSpawnStmt(SpawnStmt *S);
+    Stmt *VisitSyncStmt(SyncStmt *S);
 
     // Importing expressions
     Expr *VisitExpr(Expr *E);
@@ -4385,6 +4387,21 @@ Stmt *ASTNodeImporter::VisitCilkSpawnStmt(CilkSpawnStmt *S) {
 Stmt *ASTNodeImporter::VisitCilkSyncStmt(CilkSyncStmt *S) {
   SourceLocation SyncLoc = Importer.Import(S->getSyncLoc());
   return new (Importer.getToContext()) CilkSyncStmt(SyncLoc);
+}
+
+Stmt *ASTNodeImporter::VisitSpawnStmt(SpawnStmt *S) {
+  SourceLocation SpawnLoc = Importer.Import(S->getSpawnLoc());
+  StringRef SV = S->getSyncVar(); 
+  Stmt *Child = Importer.Import(S->getSpawnedStmt());
+  if (!Child && S->getSpawnedStmt())
+    return nullptr;
+  return new (Importer.getToContext()) SpawnStmt(SpawnLoc, SV, Child);
+}
+
+Stmt *ASTNodeImporter::VisitSyncStmt(SyncStmt *S) {
+  SourceLocation SyncLoc = Importer.Import(S->getSyncLoc());
+  StringRef SV = S->getSyncVar(); 
+  return new (Importer.getToContext()) SyncStmt(SyncLoc, SV);
 }
 
 Stmt *ASTNodeImporter::VisitCilkForStmt(CilkForStmt *S) {

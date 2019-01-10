@@ -94,6 +94,8 @@ void CodeGenFunction::EmitStmt(const Stmt *S) {
   case Stmt::SEHLeaveStmtClass:
   case Stmt::CilkSyncStmtClass:
     llvm_unreachable("should have emitted these statements as simple");
+  case Stmt::SyncStmtClass:
+    llvm_unreachable("should have emitted these statements as simple");
 
 #define STMT(Type, Base)
 #define ABSTRACT_STMT(Op)
@@ -155,6 +157,8 @@ void CodeGenFunction::EmitStmt(const Stmt *S) {
     break;
   case Stmt::CilkSpawnStmtClass:
                               EmitCilkSpawnStmt(cast<CilkSpawnStmt>(*S)); break;
+  case Stmt::SpawnStmtClass:
+                              EmitSpawnStmt(cast<SpawnStmt>(*S)); break;
   case Stmt::CilkForStmtClass:
                               EmitCilkForStmt(cast<CilkForStmt>(*S)); break;
   case Stmt::ObjCAtTryStmtClass:
@@ -358,6 +362,7 @@ bool CodeGenFunction::EmitSimpleStmt(const Stmt *S) {
   case Stmt::CaseStmtClass:     EmitCaseStmt(cast<CaseStmt>(*S));         break;
   case Stmt::SEHLeaveStmtClass: EmitSEHLeaveStmt(cast<SEHLeaveStmt>(*S)); break;
   case Stmt::CilkSyncStmtClass: EmitCilkSyncStmt(cast<CilkSyncStmt>(*S)); break;
+  case Stmt::SyncStmtClass: EmitSyncStmt(cast<SyncStmt>(*S)); break;
   }
 
   return true;

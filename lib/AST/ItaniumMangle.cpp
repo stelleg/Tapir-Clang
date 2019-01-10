@@ -3339,7 +3339,6 @@ recurse:
   case Expr::CXXInheritedCtorInitExprClass:
   case Expr::CilkSpawnExprClass:
     llvm_unreachable("unexpected statement kind");
-
   // FIXME: invent manglings for all these.
   case Expr::BlockExprClass:
   case Expr::ChooseExprClass:

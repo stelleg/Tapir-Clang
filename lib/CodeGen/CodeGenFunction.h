@@ -828,6 +828,20 @@ public:
     }
   };
 
+  
+  llvm::DenseMap<StringRef, SyncRegion*> SyncRegions;
+  SyncRegion *getOrCreateLabeledSyncRegion(const StringRef SV){
+    auto it = SyncRegions.find(SV);
+    if (it != SyncRegions.end()) {
+      return it->second; 
+    } else {
+      SyncRegion* SR = new SyncRegion(*this);
+      SR->setSyncRegionStart(EmitLabeledSyncRegionStart(SV));
+      SyncRegions.insert({SV, SR});    
+      return SR;
+    }
+  }
+
   /// The current sync region.
   SyncRegion *CurSyncRegion;
 
@@ -836,6 +850,7 @@ public:
   }
 
   llvm::Instruction *EmitSyncRegionStart();
+  llvm::Instruction *EmitLabeledSyncRegionStart(StringRef SV);
 
   void PopSyncRegion() {
     delete CurSyncRegion;
@@ -898,6 +913,9 @@ public:
 
     void StartDetach();
     void FinishDetach();
+
+    void StartLabeledDetach(SyncRegion* SR);
+    void FinishLabeledDetach(SyncRegion* SR);
 
     Address CreateDetachedMemTemp(QualType Ty,
                                   StorageDuration SD,
@@ -2720,6 +2738,8 @@ public:
   void EmitCilkSyncStmt(const CilkSyncStmt &S);
   void EmitCilkForStmt(const CilkForStmt &S,
                        ArrayRef<const Attr *> Attrs = None);
+  void EmitSpawnStmt(const SpawnStmt &S);
+  void EmitSyncStmt(const SyncStmt &S);
 
   void EmitObjCForCollectionStmt(const ObjCForCollectionStmt &S);
   void EmitObjCAtTryStmt(const ObjCAtTryStmt &S);

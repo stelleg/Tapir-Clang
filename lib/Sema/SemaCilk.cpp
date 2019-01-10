@@ -73,6 +73,30 @@ Sema::ActOnCilkSpawnStmt(SourceLocation SpawnLoc, Stmt *SubStmt) {
 }
 
 StmtResult
+Sema::ActOnSpawnStmt(SourceLocation SpawnLoc, StringRef sv, Stmt *SubStmt) {
+  DiagnoseUnusedExprResult(SubStmt);
+
+  PushFunctionScope();
+  // TODO: Figure out how to prevent jumps into and out of the spawned
+  // substatement.
+  getCurFunction()->setHasBranchProtectedScope();
+  PushExpressionEvaluationContext(
+      ExpressionEvaluationContext::PotentiallyEvaluated);
+
+  StmtResult Result = new (Context) SpawnStmt(SpawnLoc, sv, SubStmt);
+
+  PopExpressionEvaluationContext();
+  PopFunctionScopeInfo();
+
+  return Result;
+}
+
+StmtResult
+Sema::ActOnSyncStmt(SourceLocation SyncLoc, StringRef sv) {
+  return new (Context) SyncStmt(SyncLoc, sv);
+}
+
+StmtResult
 Sema::ActOnCilkSyncStmt(SourceLocation SyncLoc) {
   if (!checkCilkContext(*this, SyncLoc, "_Cilk_sync"))
     return StmtError();

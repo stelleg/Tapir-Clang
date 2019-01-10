@@ -3745,6 +3745,9 @@ public:
   ExprResult ActOnCilkSpawnExpr(SourceLocation SpawnLoc, Expr *E);
   ExprResult BuildCilkSpawnExpr(SourceLocation SpawnLoc, Expr *E);
 
+  StmtResult ActOnSyncStmt(SourceLocation SyncLoc, StringRef sv);
+  StmtResult ActOnSpawnStmt(SourceLocation SpawnLoc, StringRef sv, Stmt *S);
+
   // bool CheckIfBodyModifiesLoopControlVar(Stmt *Body);
   StmtResult HandleSimpleCilkForStmt(SourceLocation CilkForLoc,
                                      SourceLocation LParenLoc,

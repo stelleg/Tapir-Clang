@@ -2493,8 +2493,11 @@ enum CXCursorKind {
    */
   CXCursor_CilkForStmt                   = 283,
 
-  CXCursor_LastStmt = CXCursor_CilkForStmt,
 
+  CXCursor_SpawnStmt                     = 284,
+  CXCursor_SyncStmt                      = 285,
+
+  CXCursor_LastStmt = CXCursor_CilkForStmt,
   /**
    * \brief Cursor that represents the translation unit itself.
    *

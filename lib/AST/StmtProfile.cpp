@@ -1459,6 +1459,14 @@ void StmtProfiler::VisitCilkSyncStmt(const CilkSyncStmt *S) {
   VisitStmt(S);
 }
 
+void StmtProfiler::VisitSpawnStmt(const SpawnStmt *S) {
+  VisitStmt(S);
+}
+
+void StmtProfiler::VisitSyncStmt(const SyncStmt *S) {
+  VisitStmt(S);
+}
+
 void StmtProfiler::VisitCilkForStmt(const CilkForStmt *S) {
   VisitStmt(S);
 }
