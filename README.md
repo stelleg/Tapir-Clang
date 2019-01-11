@@ -1,21 +1,23 @@
 Tapir-Clang
 ================================
 
-This version of Clang enables compilation of various parallel languages to the Tapir extension to LLVM (https://github.com/wsmoses/Tapir-LLVM).
+This is an experimental approach to a frontend for tapir. It allows non-nested
+concurrency, allowing interleaved tasks. To do so, it addes the `spawn` and
+`sync` keywords, only enabled when `-ftapir` is specified. These are used with
+identifiers to link spawns with sincs:
+  
+    spawn statement: "spawn" identifier statement
+    sync statement: "sync" identifier
 
-## Cilk
-This repository provides an implementation of Cilk's front-end (which is compiled to Tapir). It supports the `_Cilk_spawn`, `_Cilk_sync`, and `_Cilk_for` keywords from Cilk. In a traditional `_Cilk_spawn` (as in the following example), the call arguments and function
-arguments are evaluated before the spawn occurs.
+For example:
 
-```
-int x = _Cilk_spawn foo(n);
-```
+    spawn f foo();
+    bar();
+    spawn g baz();
+    sync f;
+    qux();
+    sync g;
 
-For convenience, we also implemented a variant of `_Cilk_spawn` that spawns arbitrary blocks of code as follows. In a statement written this way, all variables and statements are evaluated after the spawn occurs.
-
-```
-_Cilk_spawn { x = foo(n); }
-```
-
-Please use this syntax with caution!  When spawning an arbitrary statement, the spawn occurs before the evaluation of any part of the
-spawned statement.  Furthermore, some statements, such as `goto`, are not legal to spawn.
+    
+    
+    
