@@ -3067,6 +3067,7 @@ bool CompilerInvocation::CreateFromArgs(CompilerInvocation &Res,
   if (Args.hasArg(OPT_ftapir_EQ)) {
     if (Arg *A = Args.getLastArg(OPT_ftapir_EQ)) {
       StringRef Name = A->getValue();
+      std::cout << Name.str() << std::endl; 
       if (Name == "none")
         LangOpts.TapirTarget = llvm::TapirTargetType::None;
       else if (Name == "cilk") {

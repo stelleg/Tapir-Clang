@@ -40,6 +40,7 @@ TapirTargetType clang::parseTapirTarget(const ArgList &Args) {
       .Case("cilk", TapirTargetType::Cilk)
       .Case("openmp", TapirTargetType::OpenMP)
       .Case("cilkr", TapirTargetType::CilkR)
+      .Case("qthreads", TapirTargetType::Qthreads)
       .Default(TapirTargetType::Last_TapirTargetType);
 
   return TapirTarget;
