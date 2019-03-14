@@ -58,7 +58,6 @@
 #include "llvm/Transforms/Scalar.h"
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Transforms/Tapir/TapirTypes.h"
-#include "llvm/Transforms/Tapir/TapirUtils.h"
 #include "llvm/Transforms/Tapir/CilkABI.h"
 #include "llvm/Transforms/Tapir/OpenMPABI.h"
 #include "llvm/Transforms/Tapir/QthreadsABI.h"
@@ -547,7 +546,7 @@ void EmitAssemblyHelper::CreatePasses(legacy::PassManager &MPM,
 
   PMBuilder.OptLevel = CodeGenOpts.OptimizationLevel;
 
-  switch(LangOpts.Tapir){
+  switch(LangOpts.TapirTarget){
     case TapirTargetType::Cilk:
       PMBuilder.tapirTarget = new llvm::CilkABI();
       break;
