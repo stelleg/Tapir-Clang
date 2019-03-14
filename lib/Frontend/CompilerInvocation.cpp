@@ -2810,24 +2810,24 @@ bool CompilerInvocation::CreateFromArgs(CompilerInvocation &Res,
   }
 
   LangOpts.Cilk = Args.hasArg(OPT_fcilkplus);
-  LangOpts.Tapir = llvm::TapirTargetType::None;
+  LangOpts.TapirTarget = llvm::TapirTargetType::None;
 
   // FIXME: Fix -ftapir=* parsing to use conventional mechanisms for handling
   // arguments.
-  if (Args.hasArg(OPT_ftapir)) {
-    if (Arg *A = Args.getLastArg(OPT_ftapir)) {
+  if (Args.hasArg(OPT_ftapir_EQ)) {
+    if (Arg *A = Args.getLastArg(OPT_ftapir_EQ)) {
       StringRef Name = A->getValue();
       if (Name == "none")
-        LangOpts.Tapir = llvm::TapirTargetType::None;
+        LangOpts.TapirTarget = llvm::TapirTargetType::None;
       else if (Name == "cilk") {
-        LangOpts.Tapir = llvm::TapirTargetType::Cilk;
+        LangOpts.TapirTarget = llvm::TapirTargetType::Cilk;
         LangOpts.Cilk |= true;
       } else if (Name == "openmp")
-        LangOpts.Tapir = llvm::TapirTargetType::OpenMP;
+        LangOpts.TapirTarget = llvm::TapirTargetType::OpenMP;
       else if (Name == "qthreads")
-        LangOpts.Tapir = llvm::TapirTargetType::Qthreads;
+        LangOpts.TapirTarget = llvm::TapirTargetType::Qthreads;
       else if (Name == "serial")
-        LangOpts.Tapir = llvm::TapirTargetType::Serial;
+        LangOpts.TapirTarget = llvm::TapirTargetType::Serial;
       else
         Diags.Report(diag::err_drv_invalid_value) << A->getAsString(Args) <<
           Name;
