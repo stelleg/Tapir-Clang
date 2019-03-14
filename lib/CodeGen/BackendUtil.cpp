@@ -568,7 +568,7 @@ void EmitAssemblyHelper::CreatePasses(legacy::PassManager &MPM,
 
   PMBuilder.OptLevel = CodeGenOpts.OptimizationLevel;
 
-  switch(LangOpts.Tapir){
+  switch(LangOpts.TapirTarget){
     case TapirTargetType::Cilk:
       PMBuilder.tapirTarget = new llvm::CilkABI();
       break;
