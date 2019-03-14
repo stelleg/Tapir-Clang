@@ -182,8 +182,6 @@ public:
 
 
 public:
-  llvm::TapirTargetType Tapir;
-
   /// Set of enabled sanitizers.
   SanitizerSet Sanitize;
 
@@ -254,8 +252,8 @@ public:
   /// input is a header file (i.e. -x c-header).
   bool IsHeaderFile = false;
 
-  /// \brief Runtime target for Tapir.
-  TapirTargetType TapirTarget = TapirTargetType::Last_TapirTargetType;
+  /// Runtime target for Tapir.
+  llvm::TapirTargetType TapirTarget = TapirTargetType::None;
 
   LangOptions();
 

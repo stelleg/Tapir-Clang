@@ -568,25 +568,9 @@ void EmitAssemblyHelper::CreatePasses(legacy::PassManager &MPM,
 
   PMBuilder.OptLevel = CodeGenOpts.OptimizationLevel;
 
-  switch(LangOpts.TapirTarget){
-    case TapirTargetType::Cilk:
-      PMBuilder.tapirTarget = new llvm::CilkABI();
-      break;
-    case TapirTargetType::OpenMP:
-      PMBuilder.tapirTarget = new llvm::OpenMPABI();
-      break;
-    case TapirTargetType::Qthreads:
-      PMBuilder.tapirTarget = new llvm::QthreadsABI();
-      break;
-    case TapirTargetType::Serial:
-      assert(0 && "TODO MAKE OTHER TAPIR OPTS");
-    case TapirTargetType::None:
-      PMBuilder.tapirTarget = nullptr;
-      break;
-  }
-
   if (LangOpts.Detach) PMBuilder.DisableTapirOpts = true;
   if (LangOpts.Rhino) PMBuilder.Rhino = true;
+
   PMBuilder.tapirTarget = getTapirTargetFromType(LangOpts.TapirTarget);
 
   PMBuilder.SizeLevel = CodeGenOpts.OptimizeSize;
