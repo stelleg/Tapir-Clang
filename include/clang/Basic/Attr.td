@@ -2903,27 +2903,18 @@ def LoopHint : Attr {
   /// expression: coarsens the loop with grainsize 'Value'.
 
   let Spellings = [Pragma<"clang", "loop">, Pragma<"", "unroll">,
-<<<<<<< HEAD
                    Pragma<"", "nounroll">, Pragma<"", "unroll_and_jam">,
-                   Pragma<"", "nounroll_and_jam">];
-=======
-                   Pragma<"", "nounroll">, Pragma<"", "cilk">];
->>>>>>> 2a704cc... Squashed commit of the following:
+                   Pragma<"", "nounroll_and_jam">, Pragma<"", "cilk">];
 
   /// State of the loop optimization specified by the spelling.
   let Args = [EnumArgument<"Option", "OptionType",
                           ["vectorize", "vectorize_width", "interleave", "interleave_count",
-<<<<<<< HEAD
                            "unroll", "unroll_count", "unroll_and_jam", "unroll_and_jam_count",
-                           "pipeline", "pipeline_initiation_interval", "distribute"],
+                           "pipeline", "pipeline_initiation_interval", "distribute", "grainsize"],
                           ["Vectorize", "VectorizeWidth", "Interleave", "InterleaveCount",
                            "Unroll", "UnrollCount", "UnrollAndJam", "UnrollAndJamCount",
-                           "PipelineDisabled", "PipelineInitiationInterval", "Distribute"]>,
-=======
-                           "unroll", "unroll_count", "distribute", "grainsize"],
-                          ["Vectorize", "VectorizeWidth", "Interleave", "InterleaveCount",
-                           "Unroll", "UnrollCount", "Distribute", "TapirGrainsize"]>,
->>>>>>> 2a704cc... Squashed commit of the following:
+                           "PipelineDisabled", "PipelineInitiationInterval", "Distribute", 
+                           "TapirGrainsize"]>,
               EnumArgument<"State", "LoopHintState",
                            ["enable", "disable", "numeric", "assume_safety", "full"],
                            ["Enable", "Disable", "Numeric", "AssumeSafety", "Full"]>,
@@ -2993,16 +2984,13 @@ def LoopHint : Attr {
       return "#pragma nounroll";
     else if (SpellingIndex == Pragma_unroll)
       return "#pragma unroll" + (option == UnrollCount ? getValueString(Policy) : "");
-<<<<<<< HEAD
     else if (SpellingIndex == Pragma_nounroll_and_jam)
       return "#pragma nounroll_and_jam";
     else if (SpellingIndex == Pragma_unroll_and_jam)
       return "#pragma unroll_and_jam" +
         (option == UnrollAndJamCount ? getValueString(Policy) : "");
-=======
     else if (SpellingIndex == Pragma_cilk)
       return getOptionName(option) + getValueString(Policy);
->>>>>>> 2a704cc... Squashed commit of the following:
 
     assert(SpellingIndex == Pragma_clang_loop && "Unexpected spelling");
     return getOptionName(option) + getValueString(Policy);

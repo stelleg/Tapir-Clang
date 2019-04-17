@@ -6054,7 +6054,7 @@ ExpectedStmt ASTNodeImporter::VisitObjCAutoreleasePoolStmt(
                                                                *ToSubStmtOrErr);
 }
 
-Stmt *ASTNodeImporter::VisitCilkSpawnStmt(CilkSpawnStmt *S) {
+ExpectedStmt ASTNodeImporter::VisitCilkSpawnStmt(CilkSpawnStmt *S) {
   SourceLocation SpawnLoc = Importer.Import(S->getSpawnLoc());
   Stmt *Child = Importer.Import(S->getSpawnedStmt());
   if (!Child && S->getSpawnedStmt())
@@ -6062,12 +6062,12 @@ Stmt *ASTNodeImporter::VisitCilkSpawnStmt(CilkSpawnStmt *S) {
   return new (Importer.getToContext()) CilkSpawnStmt(SpawnLoc, Child);
 }
 
-Stmt *ASTNodeImporter::VisitCilkSyncStmt(CilkSyncStmt *S) {
+ExpectedStmt ASTNodeImporter::VisitCilkSyncStmt(CilkSyncStmt *S) {
   SourceLocation SyncLoc = Importer.Import(S->getSyncLoc());
   return new (Importer.getToContext()) CilkSyncStmt(SyncLoc);
 }
 
-Stmt *ASTNodeImporter::VisitCilkForStmt(CilkForStmt *S) {
+ExpectedStmt ASTNodeImporter::VisitCilkForStmt(CilkForStmt *S) {
   Stmt *ToInit = Importer.Import(S->getInit());
   if (!ToInit && S->getInit())
     return nullptr;

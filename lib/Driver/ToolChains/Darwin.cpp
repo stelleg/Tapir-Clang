@@ -1109,8 +1109,8 @@ void DarwinClang::AddLinkRuntimeLibArgs(const ArgList &Args,
                             Sanitize.needsSharedRt());
   if (Sanitize.needsTsanRt())
     AddLinkSanitizerLibArgs(Args, CmdArgs, "tsan");
-  if (Sanitize.needsCilksanRt())
-    AddLinkSanitizerLibArgs(Args, CmdArgs, "cilk");
+//  if (Sanitize.needsCilksanRt())
+//    AddLinkSanitizerLibArgs(Args, CmdArgs, "cilk");
   if (Sanitize.needsFuzzer() && !Args.hasArg(options::OPT_dynamiclib)) {
     AddLinkSanitizerLibArgs(Args, CmdArgs, "fuzzer", /*shared=*/false);
 
@@ -2379,12 +2379,12 @@ SanitizerMask Darwin::getSupportedSanitizers() const {
     Res |= SanitizerKind::SafeStack;
     if (IsX86_64) {
       Res |= SanitizerKind::Thread;
-      Res |= SanitizerKind::Cilk;
+//      Res |= SanitizerKind::Cilk;
     }
   } else if (isTargetIOSSimulator() || isTargetTvOSSimulator()) {
     if (IsX86_64) {
       Res |= SanitizerKind::Thread;
-      Res |= SanitizerKind::Cilk;
+//      Res |= SanitizerKind::Cilk;
     }
   }
   return Res;

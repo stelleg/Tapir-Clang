@@ -887,8 +887,8 @@ void CodeGenFunction::StartFunction(GlobalDecl GD,
   if (SanOpts.has(SanitizerKind::Thread))
     Fn->addFnAttr(llvm::Attribute::SanitizeThread);
   if (SanOpts.hasOneOf(SanitizerKind::Memory | SanitizerKind::KernelMemory))
-  if (SanOpts.has(SanitizerKind::Cilk))
-    Fn->addFnAttr(llvm::Attribute::SanitizeCilk);
+//  if (SanOpts.has(SanitizerKind::Cilk))
+//    Fn->addFnAttr(llvm::Attribute::SanitizeCilk);
   if (SanOpts.has(SanitizerKind::Memory))
     Fn->addFnAttr(llvm::Attribute::SanitizeMemory);
   if (SanOpts.has(SanitizerKind::SafeStack))

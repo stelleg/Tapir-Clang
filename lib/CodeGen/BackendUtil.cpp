@@ -337,10 +337,12 @@ static void addEfficiencySanitizerPass(const PassManagerBuilder &Builder,
   PM.add(createEfficiencySanitizerPass(Opts));
 }
 
+/*
 static void addCilkSanitizerPass(const PassManagerBuilder &Builder,
                                  legacy::PassManagerBase &PM) {
   PM.add(createCilkSanitizerPass());
 }
+*/
 
 static void
 addComprehensiveStaticInstrumentationPass(const PassManagerBuilder &Builder,
@@ -685,12 +687,14 @@ void EmitAssemblyHelper::CreatePasses(legacy::PassManager &MPM,
                            addEfficiencySanitizerPass);
   }
 
+/*
   if (LangOpts.Sanitize.has(SanitizerKind::Cilk)) {
     PMBuilder.addExtension(PassManagerBuilder::EP_TapirLate,
                            addCilkSanitizerPass);
     PMBuilder.addExtension(PassManagerBuilder::EP_EnabledOnOptLevel0,
                            addCilkSanitizerPass);
   }
+*/
 
   if (LangOpts.ComprehensiveStaticInstrumentation) {
     PMBuilder.addExtension(PassManagerBuilder::EP_TapirLate,

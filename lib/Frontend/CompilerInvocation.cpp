@@ -3344,7 +3344,7 @@ bool CompilerInvocation::CreateFromArgs(CompilerInvocation &Res,
     }
   }
 
-  if (LangOpts.Cilk && (LangOpts.ObjC1 || LangOpts.ObjC2))
+  if (LangOpts.Cilk && LangOpts.ObjC)
     Diags.Report(diag::err_drv_cilk_objc);
 
   if (LangOpts.CUDA) {
